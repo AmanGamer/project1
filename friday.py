@@ -6,7 +6,6 @@ from colored import fg, attr
 from googletrans import Translator
 from getpass import getpass
 import time
-import command
 import sounddevice
 
 # Color Properties.
@@ -46,25 +45,21 @@ def command():
     return query
 
 #sleep Mechanism
-def Sleep():
-    SleepQuery = "©empty_^_^_queryª"
+def sleep():
+    sleepyQuery = "©sleepy_^_^_queryª"
     r = sr.Recognizer()
     with sr.Microphone() as source:
         r.pause_threshold = 0.75
         audio = r.listen(source)
     try:
-        SleepQuery = r.recognize_google(audio, language='en-in').lower()
-        if 'Okay Friday' in SleepQuery or bot in query:
+        sleepyQuery = r.recognize_google(audio, language='en-in').lower()
+        if wakeWord in sleepyQuery or bot in sleepyQuery:
             return query
-        elif 'exit' in SleepQuery or 'quit' in SleepQuery:
-            quitapp()
-        elif 'shutdown' in SleepQuery or 'power off' in SleepQuery:
-            shutdown()
-        else:
-            return Sleep()
+        elif 'exit' in sleepyQuery or 'quit' in sleepyQuery:
+            return sleep()
     except:
-        return Sleep()
-    return Sleep()
+        return sleep()
+    return sleep()
     
 # Bades With The Time.
 def greet_user():
@@ -90,24 +85,6 @@ def sendEmail(to, content):
     server.login(emailadd, pword)
     server.sendmail(emailadd, to, content)
     server.close()
-
-# Function Record audio 10 second
-def soundrecord():
-    fs = 44100
-    second = 10
-    speak('Recording Audio.')
-    print(yellow + '\tRecording..' + reset)
-    record_voice = sounddevice.rec(int(second * fs),samplerate=fs,channels=2)
-    sounddevice.wait()
-    write('output.wav', fs, record_voice)
-    speak('Done! Should I play It?')
-    if 'yes' in reply or 'ok' in reply or 'yup' in reply or 'do' in reply:
-        print(yellow + '\n\tOpening Recorded Files' + reset)
-        speak(f"Opening File.")
-        os.startfile('output.wav')
-    else:
-        print(red + "\n\tOkay Nevermind." + reset)
-        speak("Okay!")
 
 #quit apps
 def quitapp():
@@ -199,7 +176,7 @@ def grabPhoto():
 # User Details.
 name = 'Aman Kumar'.lower() # Enter Your Name
 bot = 'Friday'.lower() # Voice Assistant Name
-wakeWord = 'Wake'.lower() # Wake Word For Friday
+wakeWord = 'okay'.lower() # Wake Word For Friday
 emailadd = 'dogslover456321@gmail.com' # E-Mail ID
 pword = 'AmanKumar24@' # Static Pword Constant
 
@@ -254,11 +231,36 @@ if __name__ == "__main__":
             print(yellow + f'\n\tSearching For "{query.title()}"' + reset)
             speak(f"Searching for {query}")
 
+
+        # Translates English to Any Language.
+        elif 'translate' in query:
+            query = query.replace('translate ', '')
+            try:
+                sentence = query.title()
+                speak('In Which Language Should I Translate It?')
+                destL = command().lower()
+                destL = destL.replace('translate to ', '')
+                translated_sent = Translator().translate(sentence, src = 'en' , dest = destL)
+                translated = translated_sent.text
+                try:
+                    print(yellow + f'\n\t{sentence} in {destL} "{translated.upper()}"' + reset)
+                    speak(f'\n\t{sentence}, in {destL}. {translated}')
+                except Exception:
+                    print(yellow + f'\n\t{sentence} in {destL} "{translated.upper()}"' + reset)
+                    time.sleep(2)
+            except:
+                print(red + '\n\tTranslation Failed!' + reset)
+                speak("Translation Failed!")
+
         #sleep Function
         elif "sleep" in query or 'bye' in query:
             speak('Going to sleep, Bye!')
             print(red + '\n\t<!!! SLEEPING !!!>' + reset)
-            Sleep()
+            sleep()
+        
+        #Quitapp Function
+        elif 'Quit' in query:
+            quitapp()
 
         # Fetches Youtube Results.
         elif "youtube" in query:
@@ -311,28 +313,6 @@ if __name__ == "__main__":
             speak(f'Playing {query} Online!')
             webbrowser.open(musicSearch)
 
-        # Translates English to Any Language.
-        elif 'translate' in query:
-            query = query.replace('translate ', '')
-            try:
-                sentence = query.title()
-                speak('In Which Language Should I Translate It?')
-                destL = command.lower()
-                destL = destL.lower()
-                destL = destL.replace('in ', '')
-                destL = destL.replace('translate ', '')
-                destL = destL.replace('to ', '')
-                translated_sent = Translator().translate(sentence, src = 'en' , dest = destL)
-                translated = translated_sent.text
-                try:
-                    print(yellow + f'\n\t{sentence} in {destL} "{translated.upper()}"' + reset)
-                    speak(f'\n\t{sentence}, in {destL}. {translated}')
-                except Exception:
-                    print(yellow + f'\n\t{sentence} in {destL} "{translated.upper()}"' + reset)
-            except:
-                print(red + '\n\tTranslation Failed!' + reset)
-                speak("Translation Failed!")
-
         # Grabs ScreenShot.
         elif 'screenshot' in query or 'screen shot' in query:
             speak("Grabbing Screenshot!")
@@ -340,6 +320,10 @@ if __name__ == "__main__":
             img = ImageGrab.grab()
             speak("Done!")
             img.show()
+
+        #shutdown Function.
+        elif 'Shutdown' in query or 'shutdown' in query:
+            ShutDown()
 
         # Sends E-mail With G-Mail.
         elif 'send email' in query or 'send an email' in query:
