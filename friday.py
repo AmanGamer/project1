@@ -177,8 +177,8 @@ def grabPhoto():
 name = 'Aman Kumar'.lower() # Enter Your Name
 bot = 'Friday'.lower() # Voice Assistant Name
 wakeWord = 'okay'.lower() # Wake Word For Friday
-emailadd = 'dogslover456321@gmail.com' # E-Mail ID
-pword = 'AmanKumar24@' # Static Pword Constant
+emailadd = 'your email id' # E-Mail ID
+pword = 'your password' # Static Pword Constant
 
 os.system('cls')
 print(green + "\n\t<!!! ONLINE !!!>" + reset)
